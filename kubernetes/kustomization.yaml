@@ -1,0 +1,25 @@
+
+# Kustomization for vistaai
+# Deploy with: kubectl apply -k kubernetes/
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: vistaai
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secret.yaml
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+
+commonLabels:
+  app.kubernetes.io/name: vistaai
+  app.kubernetes.io/version: "0.1.0"
+  app.kubernetes.io/managed-by: kustomize
+
+# Image customization (override in overlays)
+images:
+  - name: vistaai
+    newTag: latest

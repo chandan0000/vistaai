@@ -1,0 +1,9 @@
+
+# Kubernetes Namespace for vistaai
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vistaai
+  labels:
+    app.kubernetes.io/name: vistaai
+    app.kubernetes.io/managed-by: kubectl
