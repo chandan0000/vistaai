@@ -1,5 +1,4 @@
 
-
 ### ⚡ Backend (FastAPI)
 
 - **[FastAPI](https://fastapi.tiangolo.com)** + **[Pydantic v2](https://docs.pydantic.dev)** - High-performance async API
@@ -7,121 +6,6 @@
 - **Authentication** - JWT + Refresh tokens, API Keys, OAuth2 (Google)
 - **Background Tasks** - Celery, Taskiq, or ARQ
 - **Django-style CLI** - Custom management commands with auto-discovery
-
-
-
-## 🎬 Demo
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/main/assets/app_start.gif" alt="FastAPI Fullstack Generator Demo">
-</p>
-
----
-
-## 🚀 Quick Start
-
-### Installation
-
-```bash
-# pip
-pip install fastapi-fullstack
-
-# uv (recommended)
-uv tool install fastapi-fullstack
-
-# pipx
-pipx install fastapi-fullstack
-```
-
-### Create Your Project
-
-```bash
-# Interactive wizard (recommended)
-fastapi-fullstack new
-
-# Quick mode with options
-fastapi-fullstack create my_ai_app \
-  --database postgresql \
-  --auth jwt \
-  --frontend nextjs
-
-# Use presets for common setups
-fastapi-fullstack create my_ai_app --preset production   # Full production setup
-fastapi-fullstack create my_ai_app --preset ai-agent     # AI agent with streaming
-
-# Minimal project (no extras)
-fastapi-fullstack create my_ai_app --minimal
-```
-
-### Start Development
-
-#### Step 1: Install Dependencies
-
-```bash
-cd my_ai_app
-make install
-```
-
-> **Windows Users:** The `make` command requires GNU Make which is not available by default on Windows.
-> You can either install Make via [Chocolatey](https://chocolatey.org/) (`choco install make`),
-> use WSL (Windows Subsystem for Linux), or use the raw commands from the
-> [Manual Commands Reference](#-manual-commands-reference-windows--no-make) section below.
-
-#### Step 2: Start the Database
-
-```bash
-# Start PostgreSQL with Docker
-make docker-db
-
-# Wait a few seconds for the database to be ready
-```
-
-#### Step 3: Create and Apply Database Migrations
-
-The project uses Alembic for database migrations. After generating a new project, you need to create the initial migration:
-
-```bash
-# Create the initial migration (generates migration file based on your models)
-make db-migrate
-# When prompted, enter a message like: "Initial migration"
-
-# Apply the migration to create tables
-make db-upgrade
-```
-
-> **Note:** Run `make db-migrate` whenever you modify database models to generate new migrations.
-
-#### Step 4: Create Admin User
-
-```bash
-# Create an admin user (required for SQLAdmin panel access)
-make create-admin
-# Enter email and password when prompted
-```
-
-#### Step 5: Start the Backend
-
-```bash
-make run
-```
-
-The API will be available at:
-- API: http://localhost:8000
-- Docs: http://localhost:8000/docs
-- Admin Panel: http://localhost:8000/admin
-
----
-
-### Quick Start with Docker
-
-Alternatively, run everything with Docker:
-
-```bash
-# Start all backend services (API, database, Redis, etc.)
-make docker-up
-```
-
----
 
 ### Using the Project CLI
 
@@ -192,12 +76,6 @@ make create-admin  # Create admin user
 ## 🏗️ Architecture
 
 ```mermaid
-graph TB
-    subgraph Frontend["Frontend (Next.js 15)"]
-        UI[React Components]
-        WS[WebSocket Client]
-        Store[Zustand Stores]
-    end
 
     subgraph Backend["Backend (FastAPI)"]
         API[API Routes]
@@ -249,83 +127,9 @@ graph LR
 | **Services** | Business logic, orchestration |
 | **Repositories** | Data access, queries |
 
-See [Architecture Documentation](https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/blob/main/docs/architecture.md) for details.
 
----
 
-## 🤖 AI Agent
 
-Choose between **PydanticAI** or **LangChain** when generating your project, with support for multiple LLM providers:
-
-```bash
-# PydanticAI with OpenAI (default)
-fastapi-fullstack create my_app --ai-agent --ai-framework pydantic_ai
-
-# PydanticAI with Anthropic
-fastapi-fullstack create my_app --ai-agent --ai-framework pydantic_ai --llm-provider anthropic
-
-# PydanticAI with OpenRouter
-fastapi-fullstack create my_app --ai-agent --ai-framework pydantic_ai --llm-provider openrouter
-
-# LangChain with OpenAI
-fastapi-fullstack create my_app --ai-agent --ai-framework langchain
-
-# LangChain with Anthropic
-fastapi-fullstack create my_app --ai-agent --ai-framework langchain --llm-provider anthropic
-```
-
-### Supported LLM Providers
-
-| Framework | OpenAI | Anthropic | OpenRouter |
-|-----------|:------:|:---------:|:----------:|
-| **PydanticAI** | ✓ | ✓ | ✓ |
-| **LangChain** | ✓ | ✓ | - |
-
-### PydanticAI Integration
-
-Type-safe agents with full dependency injection:
-
-```python
-# app/agents/assistant.py
-from pydantic_ai import Agent, RunContext
-
-@dataclass
-class Deps:
-    user_id: str | None = None
-    db: AsyncSession | None = None
-
-agent = Agent[Deps, str](
-    model="openai:gpt-4o-mini",
-    system_prompt="You are a helpful assistant.",
-)
-
-@agent.tool
-async def search_database(ctx: RunContext[Deps], query: str) -> list[dict]:
-    """Search the database for relevant information."""
-    # Access user context and database via ctx.deps
-    ...
-```
-
-### LangChain Integration
-
-Flexible agents with LangGraph:
-
-```python
-# app/agents/langchain_assistant.py
-from langchain.tools import tool
-from langgraph.prebuilt import create_react_agent
-
-@tool
-def search_database(query: str) -> list[dict]:
-    """Search the database for relevant information."""
-    ...
-
-agent = create_react_agent(
-    model=ChatOpenAI(model="gpt-4o-mini"),
-    tools=[search_database],
-    prompt="You are a helpful assistant.",
-)
-```
 
 ### WebSocket Streaming
 
@@ -344,14 +148,7 @@ async def agent_ws(websocket: WebSocket):
         })
 ```
 
-### Observability
 
-Each framework has its own observability solution:
-
-| Framework | Observability | Dashboard |
-|-----------|--------------|-----------|
-| **PydanticAI** | [Logfire](https://logfire.pydantic.dev) | Agent runs, tool calls, token usage |
-| **LangChain** | [LangSmith](https://smith.langchain.com) | Traces, feedback, datasets |
 
 See [AI Agent Documentation](https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/blob/main/docs/ai-agent.md) for more.
 
@@ -388,48 +185,8 @@ graph LR
     HTTP --> Traces
 ```
 
-| Component | What You See |
-|-----------|-------------|
-| **PydanticAI** | Agent runs, tool calls, LLM requests, token usage, streaming events |
-| **FastAPI** | Request/response traces, latency, status codes, route performance |
-| **PostgreSQL/MongoDB** | Query execution time, slow queries, connection pool stats |
-| **Redis** | Cache hits/misses, command latency, key patterns |
-| **Celery/Taskiq** | Task execution, queue depth, worker performance |
-| **HTTPX** | External API calls, response times, error rates |
 
-### LangSmith (for LangChain)
 
-[LangSmith](https://smith.langchain.com) provides observability specifically designed for LangChain applications:
-
-| Feature | Description |
-|---------|-------------|
-| **Traces** | Full execution traces for agent runs and chains |
-| **Feedback** | Collect user feedback on agent responses |
-| **Datasets** | Build evaluation datasets from production data |
-| **Monitoring** | Track latency, errors, and token usage |
-
-LangSmith is automatically configured when you choose LangChain:
-
-```bash
-# .env
-LANGCHAIN_TRACING_V2=true
-LANGCHAIN_API_KEY=your-api-key
-LANGCHAIN_PROJECT=my_project
-```
-
-### Configuration
-
-Enable Logfire and select which components to instrument:
-
-```bash
-fastapi-fullstack new
-# ✓ Enable Logfire observability
-#   ✓ Instrument FastAPI
-#   ✓ Instrument Database
-#   ✓ Instrument Redis
-#   ✓ Instrument Celery
-#   ✓ Instrument HTTPX
-```
 
 ### Usage
 

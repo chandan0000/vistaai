@@ -12,7 +12,6 @@ from starlette.requests import Request
 from app.core.config import settings
 from app.core.security import verify_password
 from app.db.base import Base
-from app.db.models.conversation import ToolCall
 from app.db.models.session import Session
 from app.db.models.user import User
 
@@ -40,9 +39,6 @@ MODEL_ICONS: dict[str, str] = {
     "User": "fa-solid fa-user",
     "Session": "fa-solid fa-key",
     "Item": "fa-solid fa-box",
-    "Conversation": "fa-solid fa-comments",
-    "Message": "fa-solid fa-message",
-    "ToolCall": "fa-solid fa-wrench",
     "Webhook": "fa-solid fa-link",
     "WebhookDelivery": "fa-solid fa-paper-plane",
 }
@@ -69,7 +65,7 @@ def get_model_columns(model: type) -> list[str]:
     Returns:
         List of column names.
     """
-    mapper = inspect(model)
+    mapper = inspect(model)  # type: ignore[var-annotated]
     return [column.key for column in mapper.columns]
 
 
@@ -82,7 +78,7 @@ def get_searchable_columns(model: type) -> list[str]:
     Returns:
         List of searchable column names.
     """
-    mapper = inspect(model)
+    mapper = inspect(model)  # type: ignore[var-annotated]
     searchable = []
     for column in mapper.columns:
         # Include String columns that are not sensitive
@@ -102,7 +98,7 @@ def get_sortable_columns(model: type) -> list[str]:
     Returns:
         List of sortable column names.
     """
-    mapper = inspect(model)
+    mapper = inspect(model)  # type: ignore[var-annotated]
     return [column.key for column in mapper.columns]
 
 
@@ -319,7 +315,12 @@ class AdminAuth(AuthenticationBackend):
         with DBSession(get_sync_engine()) as session:
             user = session.query(User).filter(User.email == email).first()
 
-            if user and verify_password(str(password), user.hashed_password) and user.is_superuser:
+            if (
+                user
+                and user.hashed_password
+                and verify_password(str(password), user.hashed_password)
+                and user.is_superuser
+            ):
                 # Store user info in session
                 request.session["admin_user_id"] = str(user.id)
                 request.session["admin_email"] = user.email
@@ -360,10 +361,6 @@ CUSTOM_MODEL_CONFIGS: dict[type, dict[str, Any]] = {
         "icon": "fa-solid fa-key",
         "form_excluded_columns": [Session.refresh_token_hash],
         "can_create": False,  # Sessions are created via login
-    },
-    ToolCall: {
-        "icon": "fa-solid fa-wrench",
-        "can_create": False,  # Tool calls are created by the agent
     },
 }
 

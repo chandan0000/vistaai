@@ -93,7 +93,7 @@ async def deactivate_all_user_sessions(db: AsyncSession, user_id: UUID) -> int:
         .values(is_active=False)
     )
     await db.flush()
-    return result.rowcount
+    return result.rowcount  # type: ignore[attr-defined]
 
 
 async def deactivate_by_refresh_token_hash(db: AsyncSession, token_hash: str) -> Session | None:

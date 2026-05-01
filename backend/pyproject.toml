@@ -32,7 +32,6 @@ dependencies = [
     "celery[redis]>=5.6.3",
     "flower>=2.0.1",
     "boto3>=1.43.0",
-    "pydantic-ai>=1.88.0",
     "httpx>=0.28.1",
     "click>=8.3.3",
     "tabulate>=0.10.0",
@@ -100,4 +99,5 @@ generated_at = "2026-04-28T17:35:08.250613+00:00"
 [dependency-groups]
 dev = [
     "types-redis>=4.6.0.20241004",
+    "types-tabulate>=0.10.0.20260408",
 ]

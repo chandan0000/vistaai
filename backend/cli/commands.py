@@ -1,8 +1,23 @@
 """Project management CLI."""
 # ruff: noqa: E402 - Import at bottom to avoid circular imports
 
+from pathlib import Path
+
 import click
 from tabulate import tabulate
+
+
+def get_alembic_config():
+    """Get Alembic config with correct path regardless of working directory."""
+    from alembic.config import Config
+
+    # alembic.ini is always in the same directory as this CLI package
+    backend_dir = Path(__file__).parent.parent
+    ini_path = backend_dir / "alembic.ini"
+    cfg = Config(str(ini_path))
+    # Set script_location relative to backend dir so alembic finds migrations
+    cfg.set_main_option("script_location", str(backend_dir / "alembic"))
+    return cfg
 
 
 @click.group()
@@ -59,12 +74,10 @@ def db_cli():
 @db_cli.command("init")
 def db_init():
     """Initialize the database (run all migrations)."""
-    from alembic import command
-    from alembic.config import Config
+    from alembic import command  # type: ignore[attr-defined]
 
     click.echo("Initializing database...")
-    alembic_cfg = Config("alembic.ini")
-    command.upgrade(alembic_cfg, "head")
+    command.upgrade(get_alembic_config(), "head")
     click.secho("Database initialized.", fg="green")
 
 
@@ -72,11 +85,9 @@ def db_init():
 @click.option("-m", "--message", required=True, help="Migration message")
 def db_migrate(message: str):
     """Create a new migration."""
-    from alembic import command
-    from alembic.config import Config
+    from alembic import command  # type: ignore[attr-defined]
 
-    alembic_cfg = Config("alembic.ini")
-    command.revision(alembic_cfg, message=message, autogenerate=True)
+    command.revision(get_alembic_config(), message=message, autogenerate=True)
     click.secho(f"Migration created: {message}", fg="green")
 
 
@@ -84,11 +95,9 @@ def db_migrate(message: str):
 @click.option("--revision", default="head", help="Revision to upgrade to")
 def db_upgrade(revision: str):
     """Run database migrations."""
-    from alembic import command
-    from alembic.config import Config
+    from alembic import command  # type: ignore[attr-defined]
 
-    alembic_cfg = Config("alembic.ini")
-    command.upgrade(alembic_cfg, revision)
+    command.upgrade(get_alembic_config(), revision)
     click.secho(f"Upgraded to: {revision}", fg="green")
 
 
@@ -96,32 +105,26 @@ def db_upgrade(revision: str):
 @click.option("--revision", default="-1", help="Revision to downgrade to")
 def db_downgrade(revision: str):
     """Rollback database migrations."""
-    from alembic import command
-    from alembic.config import Config
+    from alembic import command  # type: ignore[attr-defined]
 
-    alembic_cfg = Config("alembic.ini")
-    command.downgrade(alembic_cfg, revision)
+    command.downgrade(get_alembic_config(), revision)
     click.secho(f"Downgraded to: {revision}", fg="green")
 
 
 @db_cli.command("current")
 def db_current():
     """Show current migration revision."""
-    from alembic import command
-    from alembic.config import Config
+    from alembic import command  # type: ignore[attr-defined]
 
-    alembic_cfg = Config("alembic.ini")
-    command.current(alembic_cfg)
+    command.current(get_alembic_config())
 
 
 @db_cli.command("history")
 def db_history():
     """Show migration history."""
-    from alembic import command
-    from alembic.config import Config
+    from alembic import command  # type: ignore[attr-defined]
 
-    alembic_cfg = Config("alembic.ini")
-    command.history(alembic_cfg)
+    command.history(get_alembic_config())
 
 
 # === Celery Commands ===

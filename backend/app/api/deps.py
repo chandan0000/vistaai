@@ -31,8 +31,6 @@ Redis = Annotated[RedisClient, Depends(get_redis)]
 
 from app.services.user import UserService
 from app.services.session import SessionService
-from app.services.item import ItemService
-from app.services.conversation import ConversationService
 
 
 def get_user_service(db: DBSession) -> UserService:
@@ -47,22 +45,6 @@ def get_session_service(db: DBSession) -> SessionService:
 
 UserSvc = Annotated[UserService, Depends(get_user_service)]
 SessionSvc = Annotated[SessionService, Depends(get_session_service)]
-
-
-def get_item_service(db: DBSession) -> ItemService:
-    """Create ItemService instance with database session."""
-    return ItemService(db)
-
-
-ItemSvc = Annotated[ItemService, Depends(get_item_service)]
-
-
-def get_conversation_service(db: DBSession) -> ConversationService:
-    """Create ConversationService instance with database session."""
-    return ConversationService(db)
-
-
-ConversationSvc = Annotated[ConversationService, Depends(get_conversation_service)]
 
 # === Authentication Dependencies ===
 

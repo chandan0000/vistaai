@@ -9,9 +9,15 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 def find_env_file() -> Path | None:
-    """Find .env file in current or parent directories."""
+    """Find .env file searching upward and in backend/ subdirectory.
+
+    Checks in order:
+    1. Current working directory
+    2. backend/ subdirectory (when running from project root)
+    3. Parent directory
+    """
     current = Path.cwd()
-    for path in [current, current.parent]:
+    for path in [current, current / "backend", current.parent]:
         env_file = path / ".env"
         if env_file.exists():
             return env_file
@@ -139,13 +145,6 @@ class Settings(BaseSettings):
     S3_SECRET_KEY: str = ""
     S3_BUCKET: str = "vistaai"
     S3_REGION: str = "us-east-1"
-
-    # === AI Agent (pydantic_ai, openai) ===
-    OPENAI_API_KEY: str = ""
-    AI_MODEL: str = "gpt-4o-mini"
-    AI_TEMPERATURE: float = 0.7
-    AI_FRAMEWORK: str = "pydantic_ai"
-    LLM_PROVIDER: str = "openai"
 
     # === CORS ===
     CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:8080"]

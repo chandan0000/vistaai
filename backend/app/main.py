@@ -83,14 +83,6 @@ def create_app() -> FastAPI:
             "description": "Example CRUD endpoints demonstrating the API pattern",
         },
         {
-            "name": "conversations",
-            "description": "AI conversation persistence - manage chat history",
-        },
-        {
-            "name": "agent",
-            "description": "AI agent WebSocket endpoint for real-time chat",
-        },
-        {
             "name": "websocket",
             "description": "WebSocket endpoints for real-time communication",
         },
