@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**vistaai** - FastAPI application generated with [Full-Stack FastAPI + Next.js Template](https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template).
+**vistaai** - FastAPI application generated with [Full-Stack FastAPI
 
 **Stack:** FastAPI + Pydantic v2, PostgreSQL (async), JWT auth, Redis, PydanticAI, Celery
 

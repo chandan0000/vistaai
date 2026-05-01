@@ -1,67 +1,4 @@
-# Full-Stack FastAPI + Next.js Template for AI/LLM Applications
 
-<p align="center">
-  <a href="https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/stargazers"><img src="https://img.shields.io/github/stars/vstorm-co/full-stack-fastapi-nextjs-llm-template?style=flat&logo=github&color=yellow" alt="GitHub Stars"></a>
-  <a href="https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/blob/main/LICENSE"><img src="https://img.shields.io/github/license/vstorm-co/full-stack-fastapi-nextjs-llm-template?color=blue" alt="License"></a>
-  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue?logo=python&logoColor=white" alt="Python"></a>
-  <a href="https://pypi.org/project/fastapi-fullstack/"><img src="https://img.shields.io/pypi/v/fastapi-fullstack?color=green&logo=pypi&logoColor=white" alt="PyPI"></a>
-  <img src="https://img.shields.io/badge/coverage-100%25-brightgreen" alt="Coverage">
-  <img src="https://img.shields.io/badge/integrations-20%2B-brightgreen" alt="20+ Integrations">
-</p>
-
-<p align="center">
-  <b>Production-ready project generator for AI/LLM applications with 20+ enterprise integrations.</b><br>
-  <sub>Built with FastAPI, Next.js 15, PydanticAI/LangChain, and everything you need for professional business applications.</sub>
-</p>
-
-<p align="center">
-  <a href="#-why-this-template">Why This Template</a> •
-  <a href="#-features">Features</a> •
-  <a href="#-demo">Demo</a> •
-  <a href="#-quick-start">Quick Start</a> •
-  <a href="#-architecture">Architecture</a> •
-  <a href="#-ai-agent">AI Agent</a> •
-  <a href="#-observability-with-logfire">Logfire</a> •
-  <a href="#-documentation">Documentation</a>
-</p>
-
-## Related Projects
-
-> **Building advanced AI agents?** Check out [pydantic-deep](https://github.com/vstorm-co/pydantic-deepagents) - a deep agent framework built on pydantic-ai with planning, filesystem, and subagent capabilities.
-
----
-
-## 🎯 Why This Template
-
-Building AI/LLM applications requires more than just an API wrapper. You need:
-
-- **Type-safe AI agents** with tool/function calling
-- **Real-time streaming** responses via WebSocket
-- **Conversation persistence** and history management
-- **Production infrastructure** - auth, rate limiting, observability
-- **Enterprise integrations** - background tasks, webhooks, admin panels
-
-This template gives you all of that out of the box, with **20+ configurable integrations** so you can focus on building your AI product, not boilerplate.
-
-### Perfect For
-
-- 🤖 **AI Chatbots & Assistants** - PydanticAI or LangChain agents with streaming responses
-- 📊 **ML Applications** - Background task processing with Celery/Taskiq
-- 🏢 **Enterprise SaaS** - Full auth, admin panel, webhooks, and more
-- 🚀 **Startups** - Ship fast with production-ready infrastructure
-
----
-
-## ✨ Features
-
-### 🤖 AI/LLM First
-
-- **[PydanticAI](https://ai.pydantic.dev)** or **[LangChain](https://python.langchain.com)** - Choose your preferred AI framework
-- **WebSocket Streaming** - Real-time responses with full event access
-- **Conversation Persistence** - Save chat history to database
-- **Custom Tools** - Easily extend agent capabilities
-- **Multi-model Support** - OpenAI, Anthropic, and more
-- **Observability** - Logfire for PydanticAI, LangSmith for LangChain
 
 ### ⚡ Backend (FastAPI)
 
@@ -71,26 +8,7 @@ This template gives you all of that out of the box, with **20+ configurable inte
 - **Background Tasks** - Celery, Taskiq, or ARQ
 - **Django-style CLI** - Custom management commands with auto-discovery
 
-### 🎨 Frontend (Next.js 15)
 
-- **React 19** + **TypeScript** + **Tailwind CSS v4**
-- **AI Chat Interface** - WebSocket streaming, tool call visualization
-- **Authentication** - HTTP-only cookies, auto-refresh
-- **Dark Mode** + **i18n** (optional)
-
-### 🔌 20+ Enterprise Integrations
-
-| Category | Integrations |
-|----------|-------------|
-| **AI Frameworks** | PydanticAI, LangChain |
-| **Caching & State** | Redis, fastapi-cache2 |
-| **Security** | Rate limiting, CORS, CSRF protection |
-| **Observability** | Logfire, LangSmith, Sentry, Prometheus |
-| **Admin** | SQLAdmin panel with auth |
-| **Events** | Webhooks, WebSockets |
-| **DevOps** | Docker, GitHub Actions, GitLab CI, Kubernetes |
-
----
 
 ## 🎬 Demo
 
@@ -859,7 +777,6 @@ generated_at = "2024-12-21T10:30:00+00:00"
 | **AI Framework** | `pydantic_ai`, `langchain` | Choose your AI agent framework |
 | **LLM Provider** | `openai`, `anthropic`, `openrouter` | OpenRouter only with PydanticAI |
 | **Background Tasks** | `none`, `celery`, `taskiq`, `arq` | Distributed queues |
-| **Frontend** | `none`, `nextjs` | Next.js 15 + React 19 |
 
 ### Presets
 
@@ -894,43 +811,8 @@ fastapi-fullstack new
 | Document | Description |
 |----------|-------------|
 | [Architecture](https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/blob/main/docs/architecture.md) | Repository + Service pattern, layered design |
-| [Frontend](https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/blob/main/docs/frontend.md) | Next.js setup, auth, state management |
-| [AI Agent](https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/blob/main/docs/ai-agent.md) | PydanticAI, tools, WebSocket streaming |
 | [Observability](https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/blob/main/docs/observability.md) | Logfire integration, tracing, metrics |
 | [Deployment](https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/blob/main/docs/deployment.md) | Docker, Kubernetes, production setup |
 | [Development](https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/blob/main/docs/development.md) | Local setup, testing, debugging |
 
 ---
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=vstorm-co/full-stack-fastapi-nextjs-llm-template&type=date&legend=top-left)](https://www.star-history.com/#vstorm-co/full-stack-fastapi-nextjs-llm-template&type=date&legend=top-left)
-
----
-
-## 🙏 Inspiration
-
-This project is inspired by:
-
-- [full-stack-fastapi-template](https://github.com/fastapi/full-stack-fastapi-template) by @tiangolo
-- [fastapi-template](https://github.com/s3rius/fastapi-template) by @s3rius
-- [FastAPI Best Practices](https://github.com/zhanymkanov/fastapi-best-practices) by @zhanymkanov
-- Django's management commands system
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please read our [Contributing Guide](https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/blob/main/CONTRIBUTING.md) for details.
-
----
-
-## 📄 License
-
-MIT License - see [LICENSE](https://github.com/vstorm-co/full-stack-fastapi-nextjs-llm-template/blob/main/LICENSE) for details.
-
----
-
-<p align="center">
-  Made with ❤️ by <a href="https://github.com/vstorm-co">VStorm</a>
-</p>
