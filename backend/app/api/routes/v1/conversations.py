@@ -12,6 +12,7 @@ The endpoints are:
 - GET /conversations/{id}/messages - List messages in conversation
 """
 
+from typing import cast
 from uuid import UUID
 
 from fastapi import APIRouter, Query, status
@@ -26,6 +27,7 @@ from app.schemas.conversation import (
     MessageCreate,
     MessageList,
     MessageRead,
+    MessageReadSimple,
 )
 
 router = APIRouter()
@@ -49,7 +51,7 @@ async def list_conversations(
         limit=limit,
         include_archived=include_archived,
     )
-    return ConversationList(items=items, total=total)
+    return ConversationList(items=cast(list[ConversationRead], items), total=total)
 
 
 @router.post("", response_model=ConversationRead, status_code=status.HTTP_201_CREATED)
@@ -137,7 +139,7 @@ async def list_messages(
     Returns messages ordered by creation time (oldest first).
     """
     items, total = await conversation_service.list_messages(conversation_id, skip=skip, limit=limit)
-    return MessageList(items=items, total=total)
+    return MessageList(items=cast(list[MessageReadSimple], items), total=total)
 
 
 @router.post(

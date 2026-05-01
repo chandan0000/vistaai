@@ -26,4 +26,5 @@ repos:
         additional_dependencies:
           - pydantic>=2.0.0
           - pydantic-settings>=2.0.0
+          - types-redis
         args: [--ignore-missing-imports]

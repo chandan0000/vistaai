@@ -24,7 +24,7 @@ from pydantic_ai.messages import (
 )
 
 from app.agents.assistant import Deps, get_agent
-from app.api.deps import get_conversation_service
+from app.api.deps import authenticate_websocket_via_message, get_conversation_service
 from app.db.session import get_db_context
 from app.schemas.conversation import (
     ConversationCreate,
@@ -118,9 +118,15 @@ async def agent_websocket(
 
     await manager.connect(websocket)
 
+    # Authenticate via first message — token stays off the URL
+    user = await authenticate_websocket_via_message(websocket)
+    if user is None:
+        manager.disconnect(websocket)
+        return
+
     # Conversation state per connection
     conversation_history: list[dict[str, str]] = []
-    deps = Deps()
+    deps = Deps(user_id=str(user.id), user_name=user.full_name)
     current_conversation_id: str | None = None
 
     try:

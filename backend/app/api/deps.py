@@ -164,19 +164,17 @@ CurrentAdmin = Annotated[User, Depends(RoleChecker(UserRole.ADMIN))]
 
 
 # WebSocket authentication dependency
-from fastapi import WebSocket, Query, Cookie
+from fastapi import WebSocket, Cookie
 
 
 async def get_current_user_ws(
     websocket: WebSocket,
-    token: str | None = Query(None, alias="token"),
     access_token: str | None = Cookie(None),
 ) -> User:
-    """Get current user from WebSocket JWT token.
+    """Get current user from WebSocket via httponly cookie.
 
-    Token can be passed either as:
-    - Query parameter: ws://...?token=<jwt>
-    - Cookie: access_token cookie (set by HTTP login)
+    Token is read from the access_token cookie set during HTTP login.
+    Cookie-based auth keeps the token out of URLs, logs, and browser history.
 
     Raises:
         AuthenticationError: If token is invalid or user not found.
@@ -185,14 +183,11 @@ async def get_current_user_ws(
 
     from app.core.security import verify_token
 
-    # Try query parameter first, then cookie
-    auth_token = token or access_token
-
-    if not auth_token:
+    if not access_token:
         await websocket.close(code=4001, reason="Missing authentication token")
         raise AuthenticationError(message="Missing authentication token")
 
-    payload = verify_token(auth_token)
+    payload = verify_token(access_token)
     if payload is None:
         await websocket.close(code=4001, reason="Invalid or expired token")
         raise AuthenticationError(message="Invalid or expired token")
@@ -216,6 +211,71 @@ async def get_current_user_ws(
         await websocket.close(code=4001, reason="User account is disabled")
         raise AuthenticationError(message="User account is disabled")
 
+    return user
+
+
+async def authenticate_websocket_via_message(websocket: WebSocket) -> User | None:
+    """Authenticate a WebSocket connection via first-message auth flow.
+
+    Flow:
+      1. Server sends  {"type": "auth_required"}
+      2. Client sends  {"type": "auth", "token": "<access_jwt>"}
+      3. Server validates and returns User, or closes the connection.
+
+    This keeps the JWT off the URL (no query params), so it never appears
+    in server access logs, proxy logs, or browser history.
+
+    Returns None if authentication failed (connection is already closed).
+    """
+    import asyncio
+    from uuid import UUID
+
+    from app.core.security import verify_token
+    from app.db.session import get_db_context
+
+    await websocket.send_json({"type": "auth_required"})
+
+    try:
+        data = await asyncio.wait_for(websocket.receive_json(), timeout=10.0)
+    except TimeoutError:
+        await websocket.close(code=4001, reason="Authentication timeout")
+        return None
+    except Exception:
+        await websocket.close(code=4001, reason="Authentication failed")
+        return None
+
+    if data.get("type") != "auth":
+        await websocket.close(code=4001, reason="Expected auth message first")
+        return None
+
+    token = data.get("token")
+    if not token:
+        await websocket.close(code=4001, reason="Missing token in auth message")
+        return None
+
+    payload = verify_token(token)
+    if payload is None or payload.get("type") != "access":
+        await websocket.close(code=4001, reason="Invalid or expired token")
+        return None
+
+    user_id = payload.get("sub")
+    if not user_id:
+        await websocket.close(code=4001, reason="Invalid token payload")
+        return None
+
+    try:
+        async with get_db_context() as db:
+            user_service = UserService(db)
+            user = await user_service.get_by_id(UUID(user_id))
+    except Exception:
+        await websocket.close(code=4001, reason="User not found")
+        return None
+
+    if not user.is_active:
+        await websocket.close(code=4001, reason="User account is disabled")
+        return None
+
+    await websocket.send_json({"type": "auth_success", "user_id": str(user.id)})
     return user
 
 

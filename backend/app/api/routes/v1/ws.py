@@ -2,6 +2,8 @@
 
 from fastapi import APIRouter, WebSocket
 
+from app.api.deps import authenticate_websocket_via_message
+
 router = APIRouter()
 
 
@@ -37,6 +39,12 @@ manager = ConnectionManager()
 async def websocket_endpoint(websocket: WebSocket):
     """WebSocket endpoint for real-time communication."""
     await manager.connect(websocket)
+
+    user = await authenticate_websocket_via_message(websocket)
+    if user is None:
+        manager.disconnect(websocket)
+        return
+
     async for data in websocket.iter_text():
         await manager.broadcast(f"Message: {data}")
     manager.disconnect(websocket)

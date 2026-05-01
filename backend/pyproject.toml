@@ -96,3 +96,8 @@ testpaths = ["tests"]
 [tool.fastapi-fullstack]
 generator_version = "0.1.18"
 generated_at = "2026-04-28T17:35:08.250613+00:00"
+
+[dependency-groups]
+dev = [
+    "types-redis>=4.6.0.20241004",
+]
